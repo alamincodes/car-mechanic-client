@@ -29,8 +29,12 @@ const router = createBrowserRouter([
       {
         path: "/service/:id",
         loader: ({ params }) =>
-          fetch(`http://localhost:5000/service/${params.id}`),
-        element: <CheckOut />,
+          fetch(`https://car-mechanic-server-coral.vercel.app/service/${params.id}`),
+        element: (
+          <PrivateRoute>
+            <CheckOut />
+          </PrivateRoute>
+        ),
       },
       {
         path: "/orders",

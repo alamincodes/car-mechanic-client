@@ -18,7 +18,26 @@ const Login = () => {
     loginUser(email, password)
       .then((result) => {
         const user = result.user;
-        navigate(from, { replace: true });
+
+        // JWT token
+        const currentUser = {
+          email: user.email,
+        };
+        fetch("https://car-mechanic-server-coral.vercel.app/JWT", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(currentUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            const token = data.token;
+            localStorage.setItem("genius-token", token);
+            navigate(from, { replace: true });
+          });
+
         console.log(user);
       })
       .catch((error) => {

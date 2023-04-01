@@ -4,7 +4,7 @@ import Logo from "../assets/logo.svg";
 import { Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { AuthContext } from "../context/AuthProvider";
 const Navbar = () => {
-  const { user, logOut, loading } = useContext(AuthContext);
+  const { user, logOut } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
 
   const navName = [
@@ -17,10 +17,12 @@ const Navbar = () => {
   // }
   return (
     <div className="navbar bg-white sticky top-0 z-20">
-      <div className="navbar-start">
-        {/* logo */}
-        <img src={Logo} className="h-14 " alt="" />
-      </div>
+      <Link to="/" className="navbar-start">
+        <div>
+          {/* logo */}
+          <img src={Logo} className="h-14 " alt="" />
+        </div>
+      </Link>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal font-semibold px-1">
           {navName.map((nav) => (
@@ -78,9 +80,19 @@ const Navbar = () => {
         </ul>
       </div>
 
-      <div className="navbar-end">
-        <button className="btn">Get started </button>
-      </div>
+      {user?.email ? (
+        <div className="navbar-end lg:hidden">
+          <button onClick={logOut} className="btn">
+            Logout
+          </button>
+        </div>
+      ) : (
+        <Link to="/login" className="navbar-end lg:hidden">
+          <button onClick={logOut} className="btn">
+            Login
+          </button>
+        </Link>
+      )}
       {/* phone */}
       <div onClick={() => setOpen(!open)} className="lg:hidden">
         {open ? (
@@ -108,6 +120,21 @@ const Navbar = () => {
               </li>
             </NavLink>
           ))}
+          <NavLink
+            className={({ isActive }) =>
+              isActive ? "bg-black  text-white" : undefined
+            }
+          >
+            <li className="px-4 p-2">{user?.displayName}</li>
+          </NavLink>
+          <NavLink
+            to="/orders"
+            className={({ isActive }) =>
+              isActive ? "bg-black  text-white" : undefined
+            }
+          >
+            <li className="px-4 p-2">Orders</li>
+          </NavLink>
         </ul>
       </div>
     </div>

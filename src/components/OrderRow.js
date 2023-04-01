@@ -5,7 +5,7 @@ const OrderRow = ({ order, handleDelete, handleUpdate }) => {
   const { name, serviceName, phone, serviceId, _id, price, status } = order;
   const [service, setService] = useState({});
   useEffect(() => {
-    fetch(`http://localhost:5000/service/${serviceId}`)
+    fetch(`https://car-mechanic-server-coral.vercel.app/service/${serviceId}`)
       .then((res) => res.json())
       .then((data) => {
         setService(data);

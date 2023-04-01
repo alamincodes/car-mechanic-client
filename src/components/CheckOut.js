@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { json, useLoaderData } from "react-router-dom";
+import {  useLoaderData } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 
 const CheckOut = () => {
@@ -27,7 +27,7 @@ const CheckOut = () => {
       address: address,
       message: message,
     };
-    fetch("http://localhost:5000/orders", {
+    fetch("https://car-mechanic-server-coral.vercel.app/orders", {
       method: "POST",
       headers: {
         "content-type": "application/json",

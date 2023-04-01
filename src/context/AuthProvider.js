@@ -31,6 +31,7 @@ const AuthProvider = ({ children }) => {
   };
   // log Out user
   const logOut = () => {
+    localStorage.removeItem("genius-token");
     return signOut(auth);
   };
   useEffect(() => {
@@ -49,6 +50,7 @@ const AuthProvider = ({ children }) => {
     user,
     logOut,
     loading,
+    setLoading
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

@@ -3,20 +3,34 @@ import { AuthContext } from "../context/AuthProvider";
 import OrderRow from "./OrderRow";
 
 const Orders = () => {
-  const { user, loading } = useContext(AuthContext);
+  const { user, logOut } = useContext(AuthContext);
 
   const [orders, seOrder] = useState([]);
   useEffect(() => {
-    fetch(`http://localhost:5000/orders?email=${user?.email}`)
-      .then((res) => res.json())
-      .then((data) => seOrder(data.reverse()));
+    fetch(
+      `https://car-mechanic-server-coral.vercel.app/orders?email=${user?.email}`,
+      {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("genius-token")}`,
+        },
+      }
+    )
+      .then((res) => {
+        if (res.status === 401 || res.status === 403) {
+          return logOut();
+        }
+        return res.json();
+      })
+      .then((data) => {
+        seOrder(data.reverse());
+      });
   }, [user?.email]);
 
   const handleDelete = (id) => {
     const confirmation = window.confirm("Are you sure delete service");
 
     if (confirmation) {
-      fetch(`http://localhost:5000/order/${id}`, {
+      fetch(`https://car-mechanic-server-coral.vercel.app/order/${id}`, {
         method: "DELETE",
       })
         .then((res) => res.json())
@@ -30,7 +44,7 @@ const Orders = () => {
     }
   };
   const handleUpdate = (id) => {
-    fetch(`http://localhost:5000/order/${id}`, {
+    fetch(`https://car-mechanic-server-coral.vercel.app/order/${id}`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
@@ -49,9 +63,7 @@ const Orders = () => {
         }
       });
   };
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+
   return (
     <div className="overflow-x-auto w-full">
       <table className="table w-full">

@@ -1,13 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ServiceCard from "./ServiceCard";
-
+import { AuthContext } from "../context/AuthProvider";
+import Loading from "./Loading";
 const Services = () => {
+  const { loading, setLoading } = useContext(AuthContext);
   const [services, setServices] = useState([]);
+  const [ascending, setAscending] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const searchRef = useRef();
+
+  const handleSearch = () => {
+    setSearch(searchRef.current.value);
+  };
   useEffect(() => {
-    fetch("http://localhost:5000/services")
+    setLoading(true);
+    fetch(
+      `https://car-mechanic-server-coral.vercel.app/services?search=${search}&order=${
+        ascending ? "ascending" : "descending"
+      }`
+    )
       .then((res) => res.json())
-      .then((data) => setServices(data));
-  }, []);
+      .then((data) => {
+        setServices(data);
+        setLoading(false);
+      });
+  }, [search, ascending]);
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="my-28">
       <div className="text-center">
@@ -17,6 +38,23 @@ const Services = () => {
           the majority have suffered alteration in some form, by injected
           humour, or randomised words which don't look even slightly believable.{" "}
         </p>
+        {/* search field*/}
+        <div>
+          <input type="text" ref={searchRef} name="" className="border " />
+          <button
+            onClick={handleSearch}
+            className="btn btn-sm ml-1 btn-primary"
+          >
+            Search
+          </button>
+        </div>
+        {/* ascending button */}
+        <button
+          onClick={() => setAscending(!ascending)}
+          className="btn capitalize"
+        >
+          {ascending ? "Low to High" : "High to low"}
+        </button>
       </div>
       <div className="grid md:grid-cols-3 grid-cols-1 gap-[24px]">
         {services.map((service) => (

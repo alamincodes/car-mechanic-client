@@ -1,9 +1,14 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import signUpImg from "../assets/images/login/login.svg";
 import { AuthContext } from "../context/AuthProvider";
 const SignUp = () => {
   const { createUser, addUserName } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  let from = location.state?.from?.pathname || "/";
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -15,6 +20,24 @@ const SignUp = () => {
       .then((result) => {
         addUserName(name);
         const user = result.user;
+        // JWT token
+        const currentUser = {
+          email: user.email,
+        };
+        fetch("https://car-mechanic-server-coral.vercel.app/JWT", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(currentUser),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            const token = data.token;
+            localStorage.setItem("genius-token", token);
+            navigate(from, { replace: true });
+          });
 
         console.log(user);
       })
